@@ -200,8 +200,8 @@ MonoBehaviour:
   cameraHeightCrouch: 0
   crouchSpeed: 3
   timeSinceCrouchChange: 0
-  jumpForce: 8.5
-  gravityForce: 16
+  jumpForce: 16.9
+  gravityForce: 45
   verticalVelocity: 0
   isGrounded: 1
 --- !u!143 &143801256135157726

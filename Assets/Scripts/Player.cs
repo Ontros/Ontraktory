@@ -19,7 +19,8 @@ public class Player : MonoBehaviour
 
     [Header("Movement")]
     public float moveSpeed = 70;
-    public float sprintSpeed = 20;
+    public float sprintSpeedMultiplier = 1.5f;
+    public float jumpSpeedMultiplier = 7;
     public float playerHeight = 1;
     public float cameraHeight = 0.72f;
     public float cameraHeightCrouch = 0f;
@@ -71,7 +72,7 @@ public class Player : MonoBehaviour
             verticalVelocity -= gravityForce * Time.deltaTime;
         }
         Vector3 moveDirection = verticalInput * forward + horizonalInput * right;
-        characterController.Move((moveDirection * (isSprinting ? sprintSpeed : moveSpeed) + transform.up * verticalVelocity) * Time.deltaTime);
+        characterController.Move((moveDirection * (isSprinting ? sprintSpeedMultiplier : 1)*moveSpeed*(isGrounded?1:jumpSpeedMultiplier) + transform.up * verticalVelocity) * Time.deltaTime);
 
         float mouseX = Input.GetAxis("Mouse X") * Time.deltaTime * sensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * Time.deltaTime * sensitivity * 1.5f;
@@ -135,14 +136,14 @@ public class Player : MonoBehaviour
         {
             float rotationSpeed = 8;
             Quaternion initialRotation = Quaternion.Euler(Vector3.zero);
-            Quaternion targetRotation = Quaternion.Euler(Vector3.zero + new Vector3(40f, -15f, 0f));
+            Quaternion targetRotation = Quaternion.Euler(new Vector3(40f, -15f, 0f));
             isAttacking = true;
 
             float t = 0f;
             while (t < 1f)
             {
                 t += Time.deltaTime * rotationSpeed;
-                hand.transform.rotation = Quaternion.Lerp(transform.rotation * initialRotation, transform.rotation * targetRotation, t);
+                hand.transform.localRotation = Quaternion.Lerp(initialRotation, targetRotation, t);
                 yield return null;
             }
 
@@ -151,7 +152,7 @@ public class Player : MonoBehaviour
             while (t < 1f)
             {
                 t += Time.deltaTime * rotationSpeed;
-                hand.transform.rotation = Quaternion.Lerp(transform.rotation * targetRotation, transform.rotation * initialRotation, t);
+                hand.transform.localRotation = Quaternion.Lerp(targetRotation, initialRotation, t);
                 yield return null;
             }
 
