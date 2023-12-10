@@ -138,15 +138,17 @@ public class Player : MonoBehaviour
 
         characterController.Move((velocity+verticalVelocity*transform.up) * Time.deltaTime);
 
-        float mouseX = Input.GetAxis("Mouse X") * Time.deltaTime * sensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * Time.deltaTime * sensitivity * 1.5f;
+        if (Cursor.lockState == CursorLockMode.Locked) {
+            float mouseX = Input.GetAxis("Mouse X") * Time.deltaTime * sensitivity*50;
+            float mouseY = Input.GetAxis("Mouse Y") * Time.deltaTime * sensitivity*75;
 
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90, 90);
+            xRotation -= mouseY;
+            xRotation = Mathf.Clamp(xRotation, -90, 90);
 
-        transform.Rotate(Vector3.up * mouseX);
-        cameraLocation.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
-        transform.rotation *= Quaternion.Euler(0, mouseX, 0);
+            transform.Rotate(Vector3.up * mouseX);
+            cameraLocation.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+            transform.rotation *= Quaternion.Euler(0, mouseX, 0);
+        }
 
         //Sprinting
         if (wasSprinting != isSprinting)
@@ -200,7 +202,7 @@ public class Player : MonoBehaviour
         {
             float rotationSpeed = 8;
             Quaternion initialRotation = Quaternion.Euler(Vector3.zero);
-            Quaternion targetRotation = Quaternion.Euler(new Vector3(40f, -15f, 0f));
+            Quaternion targetRotation = Quaternion.Euler(new Vector3(179f, -15f, 0f));
             isAttacking = true;
 
             float t = 0f;

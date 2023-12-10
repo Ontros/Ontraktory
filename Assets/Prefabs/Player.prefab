@@ -190,20 +190,33 @@ MonoBehaviour:
   mesh: {fileID: 7535088426845810074}
   cameraComponent: {fileID: 24790623341560988}
   hand: {fileID: 203747822760374859}
-  sensitivity: 229
-  defaultFov: 60
-  sprintFov: 70
-  moveSpeed: 14.05
-  sprintSpeed: 20
+  sensitivity: 2.5
+  defaultFov: 69
+  sprintFov: 75
+  maxMoveSpeed: 5.82
+  maxJumpSpeed: 0
+  maxCrouchSpeed: 0
+  sprintSpeedMultiplier: 1.5
+  jumpSpeedMultiplier: 0.5
+  sprintMaxSpeedMultiplier: 1.5
+  jumpMaxSpeedMultiplier: 2
   playerHeight: 1
   cameraHeight: 0.72
   cameraHeightCrouch: 0
   crouchSpeed: 3
   timeSinceCrouchChange: 0
+  moveAcceleration: 13.16
+  moveDecceleration: 14.82
+  crouchAcceleration: 1
+  crouchDecceleration: 1
+  jumpAcceleration: 1
+  jumpDecceleration: 1
+  minInputThreshold: 0.05
+  minHorizontalVelocity: 0.05
   jumpForce: 16.9
   gravityForce: 45
-  verticalVelocity: 0
   isGrounded: 1
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!143 &143801256135157726
 CharacterController:
   m_ObjectHideFlags: 0
