@@ -41,7 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1362035886165371767}
   - component: {fileID: 7344065273169825906}
-  - component: {fileID: 5178617036988665498}
+  - component: {fileID: 143801256135157726}
   m_Layer: 2
   m_Name: Player
   m_TagString: Untagged
@@ -81,40 +81,40 @@ MonoBehaviour:
   cameraLocation: {fileID: 91727900328105927}
   mesh: {fileID: 7535088426845810074}
   sensitivity: 500
-  moveSpeed: 700
+  moveSpeed: 1.14
   isGrounded: 1
   groundDrag: 5
-  airDrag: 1
-  jumpForce: 980
+  airDrag: 2
+  jumpForce: 14.8
   maxSpeed: 7
   playerHeight: 1
---- !u!54 &5178617036988665498
-Rigidbody:
+  gravityForce: 0.93
+--- !u!143 &143801256135157726
+CharacterController:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6063618975960483301}
-  serializedVersion: 4
-  m_Mass: 80
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 112
-  m_CollisionDetection: 1
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.03
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7535088426845810074
 GameObject:
   m_ObjectHideFlags: 0
@@ -177,7 +177,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 23b16bd613892f643809814cfcf27390, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
