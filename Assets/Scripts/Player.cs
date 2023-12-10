@@ -18,9 +18,13 @@ public class Player : MonoBehaviour
     public float sprintFov = 70;
 
     [Header("Movement")]
-    public float moveSpeed = 70;
+    public float maxMoveSpeed;
+    public float maxJumpSpeed;
+    public float maxCrouchSpeed;
     public float sprintSpeedMultiplier = 1.5f;
     public float jumpSpeedMultiplier = 7;
+    public float sprintMaxSpeedMultiplier;
+    public float jumpMaxSpeedMultiplier;
     public float playerHeight = 1;
     public float cameraHeight = 0.72f;
     public float cameraHeightCrouch = 0f;
@@ -28,10 +32,19 @@ public class Player : MonoBehaviour
     private float timeSinceSprintChange = 0;
     public float timeSinceCrouchChange = 0;
 
+    [Header("Acceleration")]
+    public float moveAcceleration;
+    public float moveDecceleration;
+    public float crouchAcceleration;
+    public float crouchDecceleration;
+    public float jumpAcceleration;
+    public float jumpDecceleration;
+    public float minInputThreshold;
+    public float minHorizontalVelocity;
+
     [Header("Jumping")]
     public float jumpForce = 100;
     public float gravityForce = 10;
-    public float verticalVelocity = 0;
     public bool isGrounded = true;
 
     private bool wasSprinting = false;
@@ -39,6 +52,9 @@ public class Player : MonoBehaviour
     private bool isAttacking = false;
     private float xRotation = 0;
     private CharacterController characterController;
+
+    public Vector3 velocity;
+    float verticalVelocity = 0;
 
 
 
@@ -52,11 +68,12 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //TODO: check proper velocity/accel time.deltaTime usecase
         Vector3 forward = transform.forward;
         Vector3 right = transform.right;
 
         bool isSprinting = Input.GetKey(KeyCode.LeftShift);
-        bool isCrouching = Input.GetKey(KeyCode.LeftControl);
+        bool isCrouching = Input.GetKey(KeyCode.C);
         isGrounded = characterController.isGrounded;
 
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
@@ -66,13 +83,60 @@ public class Player : MonoBehaviour
 
         float verticalInput = Input.GetAxis("Vertical");
         float horizonalInput = Input.GetAxis("Horizontal");
+        Vector3 horizontalMovement = (verticalInput * transform.forward + horizonalInput * transform.right);
 
+
+        float speedupVelocity = 0;
+        float slowdownVelocity = 0;
         if (!isGrounded)
         {
+            //Jumping
             verticalVelocity -= gravityForce * Time.deltaTime;
+            speedupVelocity = jumpAcceleration;
+            slowdownVelocity = jumpDecceleration;
+
         }
-        Vector3 moveDirection = verticalInput * forward + horizonalInput * right;
-        characterController.Move((moveDirection * (isSprinting ? sprintSpeedMultiplier : 1)*moveSpeed*(isGrounded?1:jumpSpeedMultiplier) + transform.up * verticalVelocity) * Time.deltaTime);
+        else if (isCrouching)
+        {
+            //Couching
+            speedupVelocity = crouchAcceleration;
+            slowdownVelocity = crouchDecceleration;
+        }
+        else
+        {
+            //Moving
+            speedupVelocity = moveAcceleration * (isSprinting ? sprintSpeedMultiplier : 1);
+            slowdownVelocity = moveDecceleration * (isSprinting ? sprintSpeedMultiplier : 1);
+        }
+        if (horizontalMovement.magnitude > minInputThreshold)
+        {
+            velocity += horizontalMovement * speedupVelocity * Time.deltaTime;
+        }
+        else
+        {
+            velocity -= velocity * slowdownVelocity * Time.deltaTime;
+        }
+        //Vector3 moveDirection = verticalInput * forward + horizonalInput * right;
+        //characterController.Move((moveDirection * (isSprinting ? sprintSpeedMultiplier : 1)*moveSpeed*(isGrounded?1:jumpSpeedMultiplier) + transform.up * verticalVelocity) * Time.deltaTime);
+
+        //TODO: max speed not working
+        //Handle max speed
+        Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
+        float maxSpeed = (isSprinting ? sprintSpeedMultiplier : 1) * (isGrounded ? 1 : jumpMaxSpeedMultiplier) * maxMoveSpeed;
+        if (horizontalVelocity.magnitude > maxSpeed)
+        {
+            horizontalVelocity *= maxSpeed / horizontalVelocity.magnitude;
+        }
+        if (horizontalVelocity.magnitude > minHorizontalVelocity)
+        {
+            velocity = new Vector3(horizontalVelocity.x, 0, horizontalVelocity.z);
+        }
+        else
+        {
+            velocity = new Vector3(0, 0, 0);
+        }
+
+        characterController.Move((velocity+verticalVelocity*transform.up) * Time.deltaTime);
 
         float mouseX = Input.GetAxis("Mouse X") * Time.deltaTime * sensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * Time.deltaTime * sensitivity * 1.5f;
@@ -112,14 +176,14 @@ public class Player : MonoBehaviour
         {
             timeSinceCrouchChange += Time.deltaTime;
         }
-        wasCrouching= isCrouching;
+        wasCrouching = isCrouching;
         if (isCrouching)
         {
             cameraLocation.transform.position = transform.position + new Vector3(0, Mathf.Lerp(cameraHeight, cameraHeightCrouch, timeSinceCrouchChange * crouchSpeed), 0);
         }
         else
         {
-            cameraLocation.transform.position = transform.position + new Vector3(0, Mathf.Lerp(cameraHeightCrouch, cameraHeight, timeSinceCrouchChange * crouchSpeed),0);
+            cameraLocation.transform.position = transform.position + new Vector3(0, Mathf.Lerp(cameraHeightCrouch, cameraHeight, timeSinceCrouchChange * crouchSpeed), 0);
         }
 
         //Atacking
