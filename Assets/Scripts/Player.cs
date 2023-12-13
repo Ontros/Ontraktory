@@ -56,6 +56,14 @@ public class Player : MonoBehaviour
     public Vector3 velocity;
     float verticalVelocity = 0;
 
+    [Header("Hand")]
+    public int itemSelected = 0;
+    public GameObject[] handGameObjects;
+    public Inventory inventory;
+    public MainMenu mainMenu;
+
+    Vector3 startPosition = new Vector3(0,300,0);
+
 
 
     // Start is called before the first frame update
@@ -68,10 +76,10 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (mainMenu.currentScreen != 0) {
+            return;
+        }
         //TODO: check proper velocity/accel time.deltaTime usecase
-        Vector3 forward = transform.forward;
-        Vector3 right = transform.right;
-
         bool isSprinting = Input.GetKey(KeyCode.LeftShift);
         bool isCrouching = Input.GetKey(KeyCode.C);
         isGrounded = characterController.isGrounded;
@@ -83,7 +91,7 @@ public class Player : MonoBehaviour
 
         float verticalInput = Input.GetAxis("Vertical");
         float horizonalInput = Input.GetAxis("Horizontal");
-        Vector3 horizontalMovement = (verticalInput * transform.forward + horizonalInput * transform.right);
+        Vector3 horizontalMovement = verticalInput * transform.forward + horizonalInput * transform.right;
 
 
         float speedupVelocity = 0;
@@ -188,15 +196,44 @@ public class Player : MonoBehaviour
             cameraLocation.transform.position = transform.position + new Vector3(0, Mathf.Lerp(cameraHeightCrouch, cameraHeight, timeSinceCrouchChange * crouchSpeed), 0);
         }
 
+        //Hand
+        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+        if (scrollInput != 0) {
+            handGameObjects[itemSelected].SetActive(false);
+            if (scrollInput > 0) {
+                itemSelected = (itemSelected + 1)%handGameObjects.Length;
+            }
+            else {
+                itemSelected = (itemSelected - 1)%handGameObjects.Length;
+            }
+            if (itemSelected < 0) {
+                itemSelected = handGameObjects.Length-1;
+            }
+            Debug.Log(scrollInput.ToString() + itemSelected.ToString());
+            handGameObjects[itemSelected].SetActive(true);
+            // hand.GetComponent<MeshFilter>().mesh = handGameObjects[itemSelected];
+        }
+
         //Atacking
         if (Input.GetMouseButtonDown(0))
         {
             //Debug.Log("attack");
-            StartCoroutine(attackSword());
+            StartCoroutine(attack());
+            if (itemSelected == 1) {
+                //Axe
+                Ray ray = new Ray(cameraLocation.transform.position,cameraLocation.transform.forward);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray,out hit, 10f, 1 << 6)) {
+                    Destroy(hit.collider.gameObject);
+                    inventory.ChangeItem(0, Random.Range(1,5));
+                    inventory.ChangeItem(1, Random.Range(0f,1f)<0.2f?1:0);
+                }
+            }
         }
     }
 
-    IEnumerator attackSword()
+    IEnumerator attack()
     {
         if (!isAttacking)
         {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class TerrainChunk {
+public class TerrainChunk: MonoBehaviour {
 	
 	const float colliderGenerationDistanceThreshold = 5;
 	public event System.Action<TerrainChunk, bool> onVisibilityChanged;
@@ -24,17 +24,21 @@ public class TerrainChunk {
 	bool hasSetCollider;
 	float maxViewDst;
 
+	bool hasTress = false;
+
 	HeightMapSettings heightMapSettings;
 	MeshSettings meshSettings;
 	Transform viewer;
+	GameObject[] trees;
 
-	public TerrainChunk(Vector2 coord, HeightMapSettings heightMapSettings, MeshSettings meshSettings, LODInfo[] detailLevels, int colliderLODIndex, Transform parent, Transform viewer, Material material) {
+	public TerrainChunk(Vector2 coord, HeightMapSettings heightMapSettings, MeshSettings meshSettings, LODInfo[] detailLevels, int colliderLODIndex, Transform parent, Transform viewer, Material material, GameObject[] trees) {
 		this.coord = coord;
 		this.detailLevels = detailLevels;
 		this.colliderLODIndex = colliderLODIndex;
 		this.heightMapSettings = heightMapSettings;
 		this.meshSettings = meshSettings;
 		this.viewer = viewer;
+		this.trees = trees;
 
 		sampleCentre = coord * meshSettings.meshWorldSize / meshSettings.meshScale;
 		Vector2 position = coord * meshSettings.meshWorldSize ;
@@ -49,6 +53,7 @@ public class TerrainChunk {
 
 		meshObject.transform.position = new Vector3(position.x,0,position.y);
 		meshObject.transform.parent = parent;
+		meshObject.isStatic = true;
 		SetVisible(false);
 
 		lodMeshes = new LODMesh[detailLevels.Length];
@@ -65,7 +70,7 @@ public class TerrainChunk {
 	}
 
 	public void Load() {
-		ThreadedDataRequester.RequestData(() => HeightMapGenerator.GenerateHeightMap (meshSettings.numVertsPerLine, meshSettings.numVertsPerLine, heightMapSettings, sampleCentre), OnHeightMapReceived);
+		ThreadedDataRequester.RequestData(() => HeightMapGenerator.GenerateHeightMap (meshSettings.numVertsPerLine, meshSettings.numVertsPerLine, heightMapSettings, sampleCentre, meshSettings.getSeed()), OnHeightMapReceived);
 	}
 
 
@@ -122,6 +127,23 @@ public class TerrainChunk {
 					onVisibilityChanged (this, visible);
 				}
 			}
+			if (!hasTress) {
+				Vector2 topLeft = new Vector2 (-1, 1) * meshSettings.meshWorldSize / 2f;
+				for (int y = 0; y < meshSettings.numVertsPerLine; y ++) {
+					for (int x = 0; x < meshSettings.numVertsPerLine; x++) {
+						if (heightMap.values[x,y] > 30 && heightMap.values[x,y] < 60 && Random.Range(0f,1f) < 0.05f) {
+							Vector2 percent = new Vector2 (x - 1, y - 1) / (meshSettings.numVertsPerLine - 3);
+							Vector2 vertexPosition2D = topLeft + new Vector2(percent.x,-percent.y) * meshSettings.meshWorldSize;
+							GameObject tree = Instantiate(trees[Random.Range(0, trees.Length-1)]);
+							tree.transform.parent = meshObject.transform;
+							tree.transform.rotation = Quaternion.Euler(0,Random.Range(0,359),0);
+							tree.transform.localPosition = new Vector3(vertexPosition2D.x,heightMap.values[x,y]-0.5f,vertexPosition2D.y);
+						}
+					}
+				}
+
+				hasTress = true;
+			}
 		}
 	}
 
@@ -142,6 +164,16 @@ public class TerrainChunk {
 				}
 			}
 		}
+	}
+	public float SampleHeight(Mesh mesh, Vector2 position) {
+		Ray ray = new Ray(new Vector3(position.x, 200,position.y), Vector3.down);
+
+		RaycastHit hit;
+
+		if (Physics.Raycast(ray, out hit,250)) {
+			return hit.point.y;
+		}
+		return 0;
 	}
 
 	public void SetVisible(bool visible) {

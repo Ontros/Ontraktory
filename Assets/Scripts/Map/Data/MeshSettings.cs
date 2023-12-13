@@ -17,6 +17,8 @@ public class MeshSettings : UpdatableData {
 	[Range(0,numSupportedFlatshadedChunkSizes-1)]
 	public int flatshadedChunkSizeIndex;
 
+	private int seed;
+
 
 	// num verts per line of mesh rendered at LOD = 0. Includes the 2 extra verts that are excluded from final mesh, but used for calculating normals
 	public int numVertsPerLine {
@@ -29,6 +31,14 @@ public class MeshSettings : UpdatableData {
 		get {
 			return (numVertsPerLine - 3) * meshScale;
 		}
+	}
+
+	public void setSeed(int seed) {
+		this.seed = seed;
+	}
+
+	public int getSeed() {
+		return seed;
 	}
 
 
