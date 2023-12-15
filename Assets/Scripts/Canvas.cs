@@ -25,6 +25,7 @@ public class MainMenu: MonoBehaviour
     public Player player;
     public GameObject[] screens;
     public int currentScreen = 0;
+    public TMP_Text notificationText;
     // Start is called before the first frame update
     // Update is called once per frame
     //0-Gameplay
@@ -65,7 +66,7 @@ public class MainMenu: MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             string itemString = "";
             foreach (ItemSlot item in inventory.items) {
-                itemString += String.Format("{0}: {1}\n", item.name, item.amount);
+                itemString += String.Format("{0}: {1}\n", item.type.ToString(), item.amount);
             }
             InventoryText.text = itemString;
         }
@@ -81,5 +82,13 @@ public class MainMenu: MonoBehaviour
         }
         screens[screenIndex].SetActive(true);
         currentScreen = screenIndex;
+    }
+
+    public IEnumerator showNotification(string notification, float time) {
+        notificationText.text = notification;
+        yield return new WaitForSeconds(time);
+        if (notification == notificationText.text) {
+            notificationText.text = "";
+        }
     }
 }

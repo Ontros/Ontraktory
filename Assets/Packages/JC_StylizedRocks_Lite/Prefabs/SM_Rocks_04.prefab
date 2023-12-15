@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 6384983713135109424}
   - component: {fileID: 3857597063716817386}
   - component: {fileID: 814850026659894942}
-  m_Layer: 7
+  - component: {fileID: 6008899813274996737}
+  m_Layer: 6
   m_Name: SM_Rocks_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,3 +107,21 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -5195935364604857740, guid: 96185f8aa01e19d46922d59530259425, type: 3}
+--- !u!114 &6008899813274996737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2684695994064820914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d58a7c573f9e68f40b44f18af9f7b0a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  preferedTool: 2
+  Health: 10
+  drops:
+  - itemType: 2
+    minDrop: 5
+    maxDrop: 7

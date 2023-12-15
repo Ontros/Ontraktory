@@ -65,6 +65,8 @@ public class Player : MonoBehaviour
     public GameObject[] buildables;
 
     public bool isBuilding = false;
+    private Coroutine blueprintCoroutine;
+    private GameObject blueprint;
 
     // Vector3 startPosition = new Vector3(0,300,0);
 
@@ -225,63 +227,87 @@ public class Player : MonoBehaviour
             StartCoroutine(attack());
             Ray ray = new Ray(cameraLocation.transform.position,cameraLocation.transform.forward);
             RaycastHit hit;
-            if (itemSelected == 1) {
-                //Axe
-                if (Physics.Raycast(ray,out hit, 5f, 1 << 6)) {
-                    Destroy(hit.collider.gameObject);
-                    inventory.ChangeItem(0, Random.Range(1,5));
-                    inventory.ChangeItem(1, Random.Range(0f,1f)<0.2f?1:0);
-                }
-            }
-            else if (itemSelected == 2) {
-                //Pickaxe
-                if (Physics.Raycast(ray,out hit, 5f, 1<<7)) {
-                    Destroy(hit.collider.gameObject);
-                    inventory.ChangeItem(2, Random.Range(2,6));
-                }
+            if (Physics.Raycast(ray,out hit, 5f, 1 << 6)) {
+                hit.collider.GetComponent<Destroyable>().Damage(10,(Tool)itemSelected,inventory);
             }
         }
 
 
 
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            StartCoroutine(createBlueprint(0, 1,0));
+            StopBuilding();
+            blueprintCoroutine = StartCoroutine(createBlueprint(0, 1,0));
+            // createBlueprintHelper(0, 1,0);
         }
+        else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+            StopBuilding();
+            blueprintCoroutine = StartCoroutine(createBlueprint(1, 1.5f,0));
+        }
+        else if(isBuilding && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Q))) {
+            StopBuilding();
+        }
+        
     }
 
-    IEnumerator createBlueprint(int objectIndex, int gridSize, int yOffest) {
-        isBuilding = true;
-        hand.SetActive(false);
-        GameObject blueprint  = Instantiate(buildables[objectIndex]);
-        BoxCollider boxCollider = blueprint.GetComponent<BoxCollider>();
-        boxCollider.enabled =false;
+    public void StopBuilding() {
+        try {
+            isBuilding = false;
+            hand.SetActive(true);
+            StopCoroutine(blueprintCoroutine);
+            Destroy(blueprint);
+        }
+        catch {}
+    }
 
-        while (!Input.GetMouseButton(0)) {
-            Ray ray = new Ray(cameraLocation.transform.position, cameraLocation.transform.forward);
-            RaycastHit raycastHit;
-            if (Physics.Raycast(ray, out raycastHit, 100)) {
-                Vector3 buildingPosition = new Vector3(Mathf.Round(raycastHit.point.x/gridSize)*gridSize, raycastHit.point.y+yOffest, Mathf.Round(raycastHit.point.z/gridSize)*gridSize);
-                blueprint.transform.position = buildingPosition;
+    IEnumerator createBlueprint(int objectIndex, float gridSize, int yOffest) {
+        blueprint = Instantiate(buildables[objectIndex]);
+        Destroyable destroyable = blueprint.GetComponent<Destroyable>();
+        if (destroyable.CheckCanBuild(inventory)) {
+            isBuilding = true;
+            hand.SetActive(false);
+            BoxCollider boxCollider = blueprint.GetComponent<BoxCollider>();
+            boxCollider.enabled =false;
+            
 
-                blueprint.SetActive(true);
+            while (!Input.GetMouseButton(0)) {
+                Ray ray = new Ray(cameraLocation.transform.position, cameraLocation.transform.forward);
+                RaycastHit raycastHit;
+                if (Physics.Raycast(ray, out raycastHit, 100)) {
+                    Vector3 buildingPosition = new Vector3(Mathf.Round(raycastHit.point.x/gridSize)*gridSize, raycastHit.point.y+yOffest, Mathf.Round(raycastHit.point.z/gridSize)*gridSize);
+                    blueprint.transform.position = buildingPosition;
+
+                    blueprint.SetActive(true);
+                }
+                else {
+                    blueprint.SetActive(false);
+                }
+
+                float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+                if (scrollInput != 0) {
+                    blueprint.transform.rotation *= Quaternion.Euler(0,90*Mathf.Sign(scrollInput),0);
+                }
+                if (Input.GetMouseButtonDown(1)) {
+                    break;
+                }
+
+                yield return new WaitForEndOfFrame();
+            }
+            if (destroyable.CheckCanBuild(inventory)) {
+                destroyable.removeItems(inventory);
+                isBuilding = false;
+                hand.SetActive(true);
+                boxCollider.enabled =true;
+                blueprint = null;
             }
             else {
-                blueprint.SetActive(false);
+                Destroy(blueprint);
+                blueprint = null;
             }
-
-            float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-            if (scrollInput != 0) {
-                blueprint.transform.rotation *= Quaternion.Euler(0,90*Mathf.Sign(scrollInput),0);
-            }
-            if (Input.GetMouseButtonDown(1)) {
-                break;
-            }
-
-            yield return new WaitForEndOfFrame();
         }
-        isBuilding = false;
-        hand.SetActive(true);
-        boxCollider.enabled =true;
+        else {
+            Destroy(blueprint);
+            blueprint = null;
+        }
     }
 
     IEnumerator attack()
@@ -324,4 +350,11 @@ public class Player : MonoBehaviour
     //        rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
     //    }
     //}
+}
+
+public enum Tool {
+    SWORD,
+    AXE,
+    PICKAXE,
+    TOOLS_AMOUNT
 }

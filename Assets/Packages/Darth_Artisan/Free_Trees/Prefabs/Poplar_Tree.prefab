@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3367454}
   - component: {fileID: 2393902}
   - component: {fileID: -8137145361523194952}
+  - component: {fileID: 7510393950265826503}
   m_Layer: 6
   m_Name: Poplar_Tree
   m_TagString: Untagged
@@ -106,3 +107,24 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 186ad8f063dbf430da4d56ebc0cb14e0, type: 3}
+--- !u!114 &7510393950265826503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d58a7c573f9e68f40b44f18af9f7b0a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  preferedTool: 1
+  Health: 10
+  drops:
+  - itemType: 0
+    minDrop: 3
+    maxDrop: 6
+  - itemType: 1
+    minDrop: 1
+    maxDrop: 2

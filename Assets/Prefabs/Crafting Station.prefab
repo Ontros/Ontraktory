@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6271345306818002082}
   - component: {fileID: 7580076843011511652}
-  m_Layer: 0
+  - component: {fileID: 1283773250251588762}
+  m_Layer: 6
   m_Name: Crafting Station
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,6 +55,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2, y: 2.2, z: 3.48}
   m_Center: {x: 0, y: 1.1, z: 0}
+--- !u!114 &1283773250251588762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 448699988075769680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d58a7c573f9e68f40b44f18af9f7b0a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  preferedTool: 1
+  Health: 10
+  drops:
+  - itemType: 0
+    minDrop: 10
+    maxDrop: 10
+  - itemType: 2
+    minDrop: 5
+    maxDrop: 5
 --- !u!1001 &3609413253490718152
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -109,6 +131,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ef7075dce0981e8438d435834f8f3271, type: 3}
       propertyPath: m_Name
       value: crafting station
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ef7075dce0981e8438d435834f8f3271, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
