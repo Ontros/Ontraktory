@@ -282,8 +282,8 @@ public class Player : MonoBehaviour
             Quaternion rotationOffset = Quaternion.Euler(Vector3.zero);
 
 
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.GetComponent<BoxCollider>().enabled = false;
+            // GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            // cube.GetComponent<BoxCollider>().enabled = false;
             while (!Input.GetMouseButton(0))
             {
                 float scrollInput = Input.GetAxis("Mouse ScrollWheel");
@@ -302,9 +302,9 @@ public class Player : MonoBehaviour
                     blueprint.transform.position = buildingPosition;
 
                     blueprint.SetActive(true);
-                    cube.transform.position = buildingPosition;
-                    cube.transform.rotation = rotationOffset;
-                    cube.transform.localScale = translatedSize;
+                    // cube.transform.position = buildingPosition;
+                    // cube.transform.rotation = rotationOffset;
+                    // cube.transform.localScale = translatedSize;
                 }
                 else
                 {
