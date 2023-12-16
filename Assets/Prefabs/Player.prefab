@@ -207,13 +207,13 @@ MonoBehaviour:
   crouchSpeed: 3
   timeSinceCrouchChange: 0
   moveAcceleration: 13.16
-  moveDecceleration: 14.82
+  moveDecceleration: 101
   crouchAcceleration: 1
   crouchDecceleration: 1
   jumpAcceleration: 1
   jumpDecceleration: 1
-  minInputThreshold: 0.05
-  minHorizontalVelocity: 0.05
+  minInputThreshold: 0.5
+  minHorizontalVelocity: 0.005
   jumpForce: 16.9
   gravityForce: 45
   isGrounded: 1
@@ -228,6 +228,8 @@ MonoBehaviour:
   buildables:
   - {fileID: 4074901497867827949, guid: 1fc257a1f2eb0734297362421637326c, type: 3}
   - {fileID: 4172563146604948365, guid: 188852cc1c9e1324d8e0a12d30bc4607, type: 3}
+  - {fileID: 4172563146604948365, guid: 7473f9fd195514542af20f9cb6431b10, type: 3}
+  - {fileID: 448699988075769680, guid: ecbb4ff7538113246af8a851d9dbdb68, type: 3}
   - {fileID: 448699988075769680, guid: ecbb4ff7538113246af8a851d9dbdb68, type: 3}
   isBuilding: 0
 --- !u!143 &143801256135157726

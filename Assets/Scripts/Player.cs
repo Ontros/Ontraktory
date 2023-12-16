@@ -255,6 +255,16 @@ public class Player : MonoBehaviour
             StopBuilding();
             blueprintCoroutine = StartCoroutine(createBlueprint(2));
         }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            StopBuilding();
+            blueprintCoroutine = StartCoroutine(createBlueprint(3));
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            StopBuilding();
+            blueprintCoroutine = StartCoroutine(createBlueprint(4));
+        }
         else if (isBuilding && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Q)))
         {
             StopBuilding();

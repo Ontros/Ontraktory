@@ -77,7 +77,8 @@ MonoBehaviour:
     minDrop: 5
     maxDrop: 5
   boxCollider: {fileID: 7580076843011511652}
-  gridSize: 1
+  gridSize: 0.25
+  type: 0
 --- !u!1001 &3609413253490718152
 PrefabInstance:
   m_ObjectHideFlags: 0

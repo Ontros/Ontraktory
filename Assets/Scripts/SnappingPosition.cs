@@ -7,4 +7,5 @@ public class SnappingPosition : MonoBehaviour
     public Vector3 offet;
     public BuildableType buildableType;
     public bool isOccupied = false;
+    public bool forceRotation = true;
 }

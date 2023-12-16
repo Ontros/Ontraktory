@@ -27,7 +27,7 @@ public class BuildableWithSnapping : Buildable
         foreach (SnappingPosition snappingPositionOfThisType in snappingPositionsOfThisType)
         {
             float foundDistance = Vector3.Distance(snappingPositionOfThisType.transform.position, raycastHit.point);
-            if (foundDistance < currentDistance && !snappingPositionOfThisType.isOccupied)
+            if (foundDistance < currentDistance)
             {
                 currentDistance = foundDistance;
                 closestSnappingPostion = snappingPositionOfThisType;
@@ -36,8 +36,17 @@ public class BuildableWithSnapping : Buildable
         if (closestSnappingPostion != null)
         {
             buildOnSnappingPosition = closestSnappingPostion;
-            blueprint.transform.position = closestSnappingPostion.transform.position + closestSnappingPostion.offet;
-            blueprint.transform.rotation = closestSnappingPostion.transform.rotation;
+            if (closestSnappingPostion.forceRotation)
+            {
+                blueprint.transform.rotation = closestSnappingPostion.transform.rotation;
+                blueprint.transform.position = closestSnappingPostion.transform.position + closestSnappingPostion.offet;
+            }
+            else
+            {
+                blueprint.transform.rotation = rotationOffset;
+                closestSnappingPostion.transform.rotation = rotationOffset;
+                blueprint.transform.position = closestSnappingPostion.transform.position + closestSnappingPostion.transform.forward * closestSnappingPostion.offet.x;
+            }
         }
         else
         {
