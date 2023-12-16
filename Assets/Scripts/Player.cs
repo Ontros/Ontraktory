@@ -242,13 +242,18 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             StopBuilding();
-            blueprintCoroutine = StartCoroutine(createBlueprint(0, 1, 0));
+            blueprintCoroutine = StartCoroutine(createBlueprint(0));
             // createBlueprintHelper(0, 1,0);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             StopBuilding();
-            blueprintCoroutine = StartCoroutine(createBlueprint(1, 1.5f, 0));
+            blueprintCoroutine = StartCoroutine(createBlueprint(1));
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            StopBuilding();
+            blueprintCoroutine = StartCoroutine(createBlueprint(2));
         }
         else if (isBuilding && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Q)))
         {
@@ -269,11 +274,11 @@ public class Player : MonoBehaviour
         catch { }
     }
 
-    IEnumerator createBlueprint(int objectIndex, float gridSize, int yOffest)
+    IEnumerator createBlueprint(int objectIndex)
     {
         blueprint = Instantiate(buildables[objectIndex]);
-        Destroyable destroyable = blueprint.GetComponent<Destroyable>();
-        if (destroyable.CheckCanBuild(inventory))
+        Buildable buildable = blueprint.GetComponent<Buildable>();
+        if (buildable.CheckCanBuild(inventory))
         {
             isBuilding = true;
             hand.SetActive(false);
@@ -281,30 +286,19 @@ public class Player : MonoBehaviour
             boxCollider.enabled = false;
             Quaternion rotationOffset = Quaternion.Euler(Vector3.zero);
 
-
-            // GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            // cube.GetComponent<BoxCollider>().enabled = false;
             while (!Input.GetMouseButton(0))
             {
                 float scrollInput = Input.GetAxis("Mouse ScrollWheel");
                 if (scrollInput != 0)
                 {
                     rotationOffset *= Quaternion.Euler(0, 90 * Mathf.Sign(scrollInput), 0);
-                    blueprint.transform.rotation = rotationOffset;
                 }
                 Ray ray = new Ray(cameraLocation.transform.position, cameraLocation.transform.forward);
                 RaycastHit raycastHit;
                 if (Physics.Raycast(ray, out raycastHit, 100))
                 {
-                    Vector3 translatedSize = Math.multiplyVector3(boxCollider.size, blueprint.transform.localScale);
-                    Vector3 startPos = new Vector3(Mathf.Round(raycastHit.point.x / gridSize) * gridSize, raycastHit.point.y + yOffest, Mathf.Round(raycastHit.point.z / gridSize) * gridSize);
-                    Vector3 buildingPosition = FindLowestSafePosition(startPos, rotationOffset, translatedSize, 200f);
-                    blueprint.transform.position = buildingPosition;
-
+                    buildable.setBuildingPosition(blueprint, raycastHit, rotationOffset);
                     blueprint.SetActive(true);
-                    // cube.transform.position = buildingPosition;
-                    // cube.transform.rotation = rotationOffset;
-                    // cube.transform.localScale = translatedSize;
                 }
                 else
                 {
@@ -318,9 +312,9 @@ public class Player : MonoBehaviour
 
                 yield return new WaitForEndOfFrame();
             }
-            if (destroyable.CheckCanBuild(inventory))
+            if (buildable.CheckCanBuild(inventory))
             {
-                destroyable.RemoveItems(inventory);
+                buildable.RemoveItems(inventory);
                 isBuilding = false;
                 hand.SetActive(true);
                 boxCollider.enabled = true;
@@ -339,27 +333,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    public Vector3 FindLowestSafePosition(Vector3 startPosition, Quaternion startRotation, Vector3 boxSize, float maxCheckDistance)
-    {
-        float maxY = startPosition.y + maxCheckDistance;
-        Vector3 currentPosition = startPosition;
-
-        while (currentPosition.y < maxY)
-        {
-            if (!Physics.CheckBox(currentPosition, boxSize / 2, startRotation))
-            {
-                return currentPosition;
-            }
-            else
-            {
-                currentPosition.y += 0.01f;
-            }
-
-        }
-
-        Debug.LogError("Not found Lowest safe position");
-        return startPosition;
-    }
     IEnumerator attack()
     {
         if (!isAttacking)

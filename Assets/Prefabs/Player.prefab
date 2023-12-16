@@ -227,6 +227,7 @@ MonoBehaviour:
   mainMenu: {fileID: 0}
   buildables:
   - {fileID: 4074901497867827949, guid: 1fc257a1f2eb0734297362421637326c, type: 3}
+  - {fileID: 4172563146604948365, guid: 188852cc1c9e1324d8e0a12d30bc4607, type: 3}
   - {fileID: 448699988075769680, guid: ecbb4ff7538113246af8a851d9dbdb68, type: 3}
   isBuilding: 0
 --- !u!143 &143801256135157726
@@ -267,13 +268,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fc7148ac1337494daf5013697fd4dbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  items:
-  - amount: 0
-    type: 0
-  - amount: 0
-    type: 1
-  - amount: 0
-    type: 2
+  canvas: {fileID: 0}
 --- !u!1 &7535088426845810074
 GameObject:
   m_ObjectHideFlags: 0

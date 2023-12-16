@@ -25,26 +25,6 @@ public class Destroyable : MonoBehaviour
             }
         }
     }
-    public bool CheckCanBuild(Inventory inventory)
-    {
-        ItemSlot[] itemSlots = new ItemSlot[(int)ItemType.Lenght];
-        foreach (Drop drop in drops)
-        {
-            itemSlots[(int)drop.itemType] = drop.GetItemSlot();
-        }
-        return inventory.CheckHasEnough(itemSlots);
-    }
-
-    public void RemoveItems(Inventory inventory)
-    {
-        foreach (Drop drop in drops)
-        {
-            ItemSlot itemSlot = drop.GetItemSlot();
-            itemSlot.amount = -itemSlot.amount;
-            inventory.ChangeItem(itemSlot);
-        }
-
-    }
 }
 
 [Serializable]

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6271345306818002082}
   - component: {fileID: 7580076843011511652}
-  - component: {fileID: 1283773250251588762}
+  - component: {fileID: 5545673840425373213}
   m_Layer: 6
   m_Name: Crafting Station
   m_TagString: Untagged
@@ -55,7 +55,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2, y: 2, z: 3.48}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1283773250251588762
+--- !u!114 &5545673840425373213
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -64,7 +64,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 448699988075769680}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d58a7c573f9e68f40b44f18af9f7b0a5, type: 3}
+  m_Script: {fileID: 11500000, guid: 432d0e6c90b9a854d840dd6dc3db3f83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   preferedTool: 1
@@ -76,6 +76,8 @@ MonoBehaviour:
   - itemType: 2
     minDrop: 5
     maxDrop: 5
+  boxCollider: {fileID: 7580076843011511652}
+  gridSize: 1
 --- !u!1001 &3609413253490718152
 PrefabInstance:
   m_ObjectHideFlags: 0
