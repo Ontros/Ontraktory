@@ -82,7 +82,8 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (mainMenu.currentScreen != 0) {
+        if (mainMenu.currentScreen != 0)
+        {
             return;
         }
         //TODO: check proper velocity/accel time.deltaTime usecase
@@ -150,11 +151,12 @@ public class Player : MonoBehaviour
             velocity = new Vector3(0, 0, 0);
         }
 
-        characterController.Move((velocity+verticalVelocity*transform.up) * Time.deltaTime);
+        characterController.Move((velocity + verticalVelocity * transform.up) * Time.deltaTime);
 
-        if (Cursor.lockState == CursorLockMode.Locked) {
-            float mouseX = Input.GetAxis("Mouse X") * Time.deltaTime * sensitivity*50;
-            float mouseY = Input.GetAxis("Mouse Y") * Time.deltaTime * sensitivity*75;
+        if (Cursor.lockState == CursorLockMode.Locked)
+        {
+            float mouseX = Input.GetAxis("Mouse X") * Time.deltaTime * sensitivity * 50;
+            float mouseY = Input.GetAxis("Mouse Y") * Time.deltaTime * sensitivity * 75;
 
             xRotation -= mouseY;
             xRotation = Mathf.Clamp(xRotation, -90, 90);
@@ -204,18 +206,21 @@ public class Player : MonoBehaviour
 
         //Hand
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        if (scrollInput != 0) {
+        if (scrollInput != 0)
+        {
             handGameObjects[itemSelected].SetActive(false);
-            if (scrollInput > 0) {
-                itemSelected = (itemSelected + 1)%handGameObjects.Length;
+            if (scrollInput > 0)
+            {
+                itemSelected = (itemSelected + 1) % handGameObjects.Length;
             }
-            else {
-                itemSelected = (itemSelected - 1)%handGameObjects.Length;
+            else
+            {
+                itemSelected = (itemSelected - 1) % handGameObjects.Length;
             }
-            if (itemSelected < 0) {
-                itemSelected = handGameObjects.Length-1;
+            if (itemSelected < 0)
+            {
+                itemSelected = handGameObjects.Length - 1;
             }
-            Debug.Log(scrollInput.ToString() + itemSelected.ToString());
             handGameObjects[itemSelected].SetActive(true);
             // hand.GetComponent<MeshFilter>().mesh = handGameObjects[itemSelected];
         }
@@ -223,93 +228,138 @@ public class Player : MonoBehaviour
         //Atacking
         if (Input.GetMouseButtonDown(0) && !isBuilding)
         {
-            //Debug.Log("attack");
             StartCoroutine(attack());
-            Ray ray = new Ray(cameraLocation.transform.position,cameraLocation.transform.forward);
+            Ray ray = new Ray(cameraLocation.transform.position, cameraLocation.transform.forward);
             RaycastHit hit;
-            if (Physics.Raycast(ray,out hit, 5f, 1 << 6)) {
-                hit.collider.GetComponent<Destroyable>().Damage(10,(Tool)itemSelected,inventory);
+            if (Physics.Raycast(ray, out hit, 5f, 1 << 6))
+            {
+                hit.collider.GetComponent<Destroyable>().Damage(10, (Tool)itemSelected, inventory);
             }
         }
 
 
 
-        if (Input.GetKeyDown(KeyCode.Alpha1)) {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
             StopBuilding();
-            blueprintCoroutine = StartCoroutine(createBlueprint(0, 1,0));
+            blueprintCoroutine = StartCoroutine(createBlueprint(0, 1, 0));
             // createBlueprintHelper(0, 1,0);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
             StopBuilding();
-            blueprintCoroutine = StartCoroutine(createBlueprint(1, 1.5f,0));
+            blueprintCoroutine = StartCoroutine(createBlueprint(1, 1.5f, 0));
         }
-        else if(isBuilding && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Q))) {
+        else if (isBuilding && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Q)))
+        {
             StopBuilding();
         }
-        
+
     }
 
-    public void StopBuilding() {
-        try {
+    public void StopBuilding()
+    {
+        try
+        {
             isBuilding = false;
             hand.SetActive(true);
             StopCoroutine(blueprintCoroutine);
             Destroy(blueprint);
         }
-        catch {}
+        catch { }
     }
 
-    IEnumerator createBlueprint(int objectIndex, float gridSize, int yOffest) {
+    IEnumerator createBlueprint(int objectIndex, float gridSize, int yOffest)
+    {
         blueprint = Instantiate(buildables[objectIndex]);
         Destroyable destroyable = blueprint.GetComponent<Destroyable>();
-        if (destroyable.CheckCanBuild(inventory)) {
+        if (destroyable.CheckCanBuild(inventory))
+        {
             isBuilding = true;
             hand.SetActive(false);
             BoxCollider boxCollider = blueprint.GetComponent<BoxCollider>();
-            boxCollider.enabled =false;
-            
+            boxCollider.enabled = false;
+            Quaternion rotationOffset = Quaternion.Euler(Vector3.zero);
 
-            while (!Input.GetMouseButton(0)) {
+
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.GetComponent<BoxCollider>().enabled = false;
+            while (!Input.GetMouseButton(0))
+            {
+                float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+                if (scrollInput != 0)
+                {
+                    rotationOffset *= Quaternion.Euler(0, 90 * Mathf.Sign(scrollInput), 0);
+                    blueprint.transform.rotation = rotationOffset;
+                }
                 Ray ray = new Ray(cameraLocation.transform.position, cameraLocation.transform.forward);
                 RaycastHit raycastHit;
-                if (Physics.Raycast(ray, out raycastHit, 100)) {
-                    Vector3 buildingPosition = new Vector3(Mathf.Round(raycastHit.point.x/gridSize)*gridSize, raycastHit.point.y+yOffest, Mathf.Round(raycastHit.point.z/gridSize)*gridSize);
+                if (Physics.Raycast(ray, out raycastHit, 100))
+                {
+                    Vector3 translatedSize = Math.multiplyVector3(boxCollider.size, blueprint.transform.localScale);
+                    Vector3 startPos = new Vector3(Mathf.Round(raycastHit.point.x / gridSize) * gridSize, raycastHit.point.y + yOffest, Mathf.Round(raycastHit.point.z / gridSize) * gridSize);
+                    Vector3 buildingPosition = FindLowestSafePosition(startPos, rotationOffset, translatedSize, 200f);
                     blueprint.transform.position = buildingPosition;
 
                     blueprint.SetActive(true);
+                    cube.transform.position = buildingPosition;
+                    cube.transform.rotation = rotationOffset;
+                    cube.transform.localScale = translatedSize;
                 }
-                else {
+                else
+                {
                     blueprint.SetActive(false);
                 }
 
-                float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-                if (scrollInput != 0) {
-                    blueprint.transform.rotation *= Quaternion.Euler(0,90*Mathf.Sign(scrollInput),0);
-                }
-                if (Input.GetMouseButtonDown(1)) {
+                if (Input.GetMouseButtonDown(1))
+                {
                     break;
                 }
 
                 yield return new WaitForEndOfFrame();
             }
-            if (destroyable.CheckCanBuild(inventory)) {
-                destroyable.removeItems(inventory);
+            if (destroyable.CheckCanBuild(inventory))
+            {
+                destroyable.RemoveItems(inventory);
                 isBuilding = false;
                 hand.SetActive(true);
-                boxCollider.enabled =true;
+                boxCollider.enabled = true;
                 blueprint = null;
             }
-            else {
+            else
+            {
                 Destroy(blueprint);
                 blueprint = null;
             }
         }
-        else {
+        else
+        {
             Destroy(blueprint);
             blueprint = null;
         }
     }
 
+    public Vector3 FindLowestSafePosition(Vector3 startPosition, Quaternion startRotation, Vector3 boxSize, float maxCheckDistance)
+    {
+        float maxY = startPosition.y + maxCheckDistance;
+        Vector3 currentPosition = startPosition;
+
+        while (currentPosition.y < maxY)
+        {
+            if (!Physics.CheckBox(currentPosition, boxSize / 2, startRotation))
+            {
+                return currentPosition;
+            }
+            else
+            {
+                currentPosition.y += 0.01f;
+            }
+
+        }
+
+        Debug.LogError("Not found Lowest safe position");
+        return startPosition;
+    }
     IEnumerator attack()
     {
         if (!isAttacking)
@@ -352,7 +402,8 @@ public class Player : MonoBehaviour
     //}
 }
 
-public enum Tool {
+public enum Tool
+{
     SWORD,
     AXE,
     PICKAXE,

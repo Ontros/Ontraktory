@@ -7,7 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainMenu: MonoBehaviour
+public class MainMenu : MonoBehaviour
 {
     public Canvas canvas;
     public TMP_Text sensText;
@@ -31,27 +31,32 @@ public class MainMenu: MonoBehaviour
     //0-Gameplay
     //1-MainMenu
     //2-Inventory
-    
-    public void onExitMainMenuClick() {
+
+    public void onExitMainMenuClick()
+    {
         setScreen(0);
     }
 
-    public void onExitGameClick() {
+    public void onExitGameClick()
+    {
         Application.Quit();
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && (currentScreen == 0 || currentScreen == 1)) {
-            setScreen((currentScreen+1)%2);
+        if (Input.GetKeyDown(KeyCode.Escape) && (currentScreen == 0 || currentScreen == 1))
+        {
+            setScreen((currentScreen + 1) % 2);
         }
-        else if ((Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Tab)||Input.GetKeyDown(KeyCode.Escape))&&(currentScreen == 0 || currentScreen == 2)) {
-            setScreen(currentScreen == 0?2:0);
+        else if ((Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.Escape)) && (currentScreen == 0 || currentScreen == 2))
+        {
+            setScreen(currentScreen == 0 ? 2 : 0);
         }
         // if (mainMenu.activeSelf != isOpen) {
         //     mainMenu.SetActive(isOpen);
         // }
-        if (currentScreen == 1) {
+        if (currentScreen == 1)
+        {
             //Main menu
             Cursor.lockState = CursorLockMode.None;
             player.sensitivity = sensSlider.value;
@@ -61,33 +66,40 @@ public class MainMenu: MonoBehaviour
             fovText.text = player.defaultFov.ToString();
             fovSprintText.text = player.sprintFov.ToString();
         }
-        else if (currentScreen == 2) {
+        else if (currentScreen == 2)
+        {
             //Inventory
             Cursor.lockState = CursorLockMode.None;
             string itemString = "";
-            foreach (ItemSlot item in inventory.items) {
+            foreach (ItemSlot item in inventory.items)
+            {
                 itemString += String.Format("{0}: {1}\n", item.type.ToString(), item.amount);
             }
             InventoryText.text = itemString;
         }
-        else {
+        else
+        {
             //Gameplay
             Cursor.lockState = CursorLockMode.Locked;
         }
     }
 
-    public void setScreen(int screenIndex) {
-        foreach (GameObject screen in screens) {
+    public void setScreen(int screenIndex)
+    {
+        foreach (GameObject screen in screens)
+        {
             screen.SetActive(false);
         }
         screens[screenIndex].SetActive(true);
         currentScreen = screenIndex;
     }
 
-    public IEnumerator showNotification(string notification, float time) {
+    public IEnumerator showNotification(string notification, float time)
+    {
         notificationText.text = notification;
         yield return new WaitForSeconds(time);
-        if (notification == notificationText.text) {
+        if (notification == notificationText.text)
+        {
             notificationText.text = "";
         }
     }
