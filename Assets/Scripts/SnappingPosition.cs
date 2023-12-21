@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class SnappingPosition : MonoBehaviour
 {
-    public Vector3 offet;
     public BuildableType buildableType;
     public bool isOccupied = false;
-    public bool forceRotation = true;
+
+    public float xOffset = 0;
+    public float yOffset = 0;
+    public float zOffset = 0;
+
+    public float[] possibleRototations;
+
+    public int currentRotationIndex = 0;
 }

@@ -8,6 +8,9 @@ public class Buildable : Destroyable
     public float gridSize;
 
     public BuildableType type;
+
+
+
     public bool CheckCanBuild(Inventory inventory)
     {
         ItemSlot[] itemSlots = new ItemSlot[(int)ItemType.Lenght];
@@ -28,12 +31,16 @@ public class Buildable : Destroyable
         }
     }
 
-    public virtual void setBuildingPosition(GameObject blueprint, RaycastHit raycastHit, Quaternion rotationOffset)
+    public virtual void setBuildingPosition(GameObject blueprint, RaycastHit raycastHit)
     {
+        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+        if (scrollInput != 0)
+        {
+            blueprint.transform.rotation *= Quaternion.Euler(0, 90 * Mathf.Sign(scrollInput), 0);
+        }
         Vector3 translatedSize = Math.multiplyVector3(boxCollider.size, blueprint.transform.localScale);
         Vector3 startPos = new Vector3(Mathf.Round(raycastHit.point.x / gridSize) * gridSize, raycastHit.point.y, Mathf.Round(raycastHit.point.z / gridSize) * gridSize);
-        blueprint.transform.position = FindLowestSafePosition(startPos, rotationOffset, translatedSize, 200f);
-        blueprint.transform.rotation = rotationOffset;
+        blueprint.transform.position = FindLowestSafePosition(startPos, blueprint.transform.rotation, translatedSize, 200f);
     }
 
     public Vector3 FindLowestSafePosition(Vector3 startPosition, Quaternion startRotation, Vector3 boxSize, float maxCheckDistance)

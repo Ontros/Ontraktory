@@ -294,20 +294,15 @@ public class Player : MonoBehaviour
             hand.SetActive(false);
             BoxCollider boxCollider = blueprint.GetComponent<BoxCollider>();
             boxCollider.enabled = false;
-            Quaternion rotationOffset = Quaternion.Euler(Vector3.zero);
+            // Quaternion rotationOffset = Quaternion.Euler(Vector3.zero);
 
             while (!Input.GetMouseButton(0))
             {
-                float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-                if (scrollInput != 0)
-                {
-                    rotationOffset *= Quaternion.Euler(0, 90 * Mathf.Sign(scrollInput), 0);
-                }
                 Ray ray = new Ray(cameraLocation.transform.position, cameraLocation.transform.forward);
                 RaycastHit raycastHit;
                 if (Physics.Raycast(ray, out raycastHit, 100))
                 {
-                    buildable.setBuildingPosition(blueprint, raycastHit, rotationOffset);
+                    buildable.setBuildingPosition(blueprint, raycastHit);
                     blueprint.SetActive(true);
                 }
                 else
@@ -372,6 +367,7 @@ public class Player : MonoBehaviour
             isAttacking = false;
         }
     }
+
 
     //private void SpeedControl()
     //{
