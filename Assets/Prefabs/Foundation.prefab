@@ -128,13 +128,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildableType: 1
-  isOccupied: 0
   xOffset: 0
   yOffset: 1.4875
   zOffset: 0
   possibleRototations:
   - 0
+  isOccupied: 
   currentRotationIndex: 0
+  buildableHasOpposite: 1
 --- !u!1 &3816508451313141485
 GameObject:
   m_ObjectHideFlags: 0
@@ -180,13 +181,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildableType: 0
-  isOccupied: 0
   xOffset: 2.25
   yOffset: 0
   zOffset: 0
   possibleRototations:
   - 0
+  isOccupied: 
   currentRotationIndex: 0
+  buildableHasOpposite: 1
 --- !u!1 &4074901497867827949
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,13 +318,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildableType: 1
-  isOccupied: 0
   xOffset: 0
   yOffset: 1.4875
   zOffset: 0
   possibleRototations:
   - 0
+  isOccupied: 
   currentRotationIndex: 0
+  buildableHasOpposite: 1
 --- !u!1 &5224941358088737009
 GameObject:
   m_ObjectHideFlags: 0
@@ -368,13 +371,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildableType: 1
-  isOccupied: 0
   xOffset: 0
   yOffset: 1.4875
   zOffset: 0
   possibleRototations:
   - 0
+  isOccupied: 
   currentRotationIndex: 0
+  buildableHasOpposite: 1
 --- !u!1 &5698039772203332172
 GameObject:
   m_ObjectHideFlags: 0
@@ -420,13 +424,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildableType: 0
-  isOccupied: 0
   xOffset: 2.25
   yOffset: 0
   zOffset: 0
   possibleRototations:
   - 0
+  isOccupied: 
   currentRotationIndex: 0
+  buildableHasOpposite: 1
 --- !u!1 &5911163946706267048
 GameObject:
   m_ObjectHideFlags: 0
@@ -472,13 +477,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildableType: 0
-  isOccupied: 0
   xOffset: 2.25
   yOffset: 0
   zOffset: 0
   possibleRototations:
   - 0
+  isOccupied: 
   currentRotationIndex: 0
+  buildableHasOpposite: 1
 --- !u!1 &7771541325389830664
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,13 +530,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildableType: 1
-  isOccupied: 0
   xOffset: 0
   yOffset: 1.4875
   zOffset: 0
   possibleRototations:
   - 0
+  isOccupied: 
   currentRotationIndex: 0
+  buildableHasOpposite: 1
 --- !u!1 &8494160912283081313
 GameObject:
   m_ObjectHideFlags: 0
@@ -576,10 +583,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildableType: 0
-  isOccupied: 0
   xOffset: 2.25
   yOffset: 0
   zOffset: 0
   possibleRototations:
   - 0
+  isOccupied: 
   currentRotationIndex: 0
+  buildableHasOpposite: 1

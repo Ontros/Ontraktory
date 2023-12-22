@@ -9,8 +9,6 @@ public class Buildable : Destroyable
 
     public BuildableType type;
 
-
-
     public bool CheckCanBuild(Inventory inventory)
     {
         ItemSlot[] itemSlots = new ItemSlot[(int)ItemType.Lenght];
