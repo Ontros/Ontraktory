@@ -9,14 +9,23 @@ public class Buildable : Destroyable
 
     public BuildableType type;
 
-    public bool CheckCanBuild(Inventory inventory)
+    protected bool isBlueprint = true;
+
+    public virtual CanBeBuilt CheckCanBuild(Inventory inventory)
     {
         ItemSlot[] itemSlots = new ItemSlot[(int)ItemType.Lenght];
         foreach (Drop drop in drops)
         {
             itemSlots[(int)drop.itemType] = drop.GetItemSlot();
         }
-        return inventory.CheckHasEnough(itemSlots);
+        if (inventory.CheckHasEnough(itemSlots))
+        {
+            return CanBeBuilt.YES;
+        }
+        else
+        {
+            return CanBeBuilt.NOT_ENOUGH_ITEMS;
+        }
     }
 
     public virtual void RemoveItems(Inventory inventory)
@@ -27,6 +36,7 @@ public class Buildable : Destroyable
             itemSlot.amount = -itemSlot.amount;
             inventory.ChangeItem(itemSlot);
         }
+        isBlueprint = false;
     }
 
     public virtual void setBuildingPosition(GameObject blueprint, RaycastHit raycastHit)
@@ -69,4 +79,11 @@ public enum BuildableType
     Foundation,
     Wall,
     Crafting_Table,
+}
+
+public enum CanBeBuilt
+{
+    YES,
+    NOT_ENOUGH_ITEMS,
+    OCCUPIED
 }

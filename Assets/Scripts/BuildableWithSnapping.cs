@@ -4,16 +4,11 @@ using UnityEngine;
 
 public class BuildableWithSnapping : Buildable
 {
-    SnappingPosition foreignSnappingPosition;
-    SnappingPosition localSnappingPosition;
-    public List<DependantSnappingPosition> dependandSnappingPositions = new List<DependantSnappingPosition>();
     public override void setBuildingPosition(GameObject blueprint, RaycastHit raycastHit)
     {
         Buildable colliderBuildale = raycastHit.collider.GetComponent<Buildable>();
         if (colliderBuildale == null)
         {
-            foreignSnappingPosition = null;
-            localSnappingPosition = null;
             base.setBuildingPosition(blueprint, raycastHit);
             return;
         }
@@ -31,7 +26,7 @@ public class BuildableWithSnapping : Buildable
         foreach (SnappingPosition snappingPositionOfThisType in snappingPositionsOfThisType)
         {
             float foundDistance = Vector3.Distance(snappingPositionOfThisType.transform.position, raycastHit.point);
-            if (foundDistance < currentDistance && snappingPositionOfThisType.hasAvailableRotations())
+            if (foundDistance < currentDistance)
             {
                 currentDistance = foundDistance;
                 closestSnappingPostion = snappingPositionOfThisType;
@@ -42,37 +37,9 @@ public class BuildableWithSnapping : Buildable
             closestSnappingPostion.rotateMouseWheel(Input.GetAxis("Mouse ScrollWheel"));
             blueprint.transform.rotation = closestSnappingPostion.transform.rotation * Quaternion.AngleAxis(closestSnappingPostion.possibleRototations[closestSnappingPostion.currentRotationIndex], Vector3.up);
             blueprint.transform.position = closestSnappingPostion.transform.position + blueprint.transform.forward * closestSnappingPostion.xOffset + closestSnappingPostion.transform.up * closestSnappingPostion.yOffset + blueprint.transform.right * closestSnappingPostion.zOffset;
-            foreignSnappingPosition = closestSnappingPostion;
-
-            //Get local snapping position
-            SnappingPosition closestLocalSnappingPosition = null;
-            float closestLocalSnappingPositionDistance = Mathf.Infinity;
-            foreach (SnappingPosition localSnappingPosition in blueprint.GetComponentsInChildren<SnappingPosition>())
-            {
-                if (localSnappingPosition.buildableType == colliderBuildale.type)
-                {
-                    float foundDistance = Vector3.Distance(localSnappingPosition.transform.position, foreignSnappingPosition.transform.position);
-                    if (foundDistance < closestLocalSnappingPositionDistance)
-                    {
-                        closestLocalSnappingPositionDistance = foundDistance;
-                        closestLocalSnappingPosition = localSnappingPosition;
-                    }
-                }
-            }
-            if (closestLocalSnappingPosition != null)
-            {
-                localSnappingPosition = closestLocalSnappingPosition;
-            }
-            else
-            {
-                Debug.LogError("Not found closest local snapping position");
-            }
-
         }
         else
         {
-            foreignSnappingPosition = null;
-            localSnappingPosition = null;
             base.setBuildingPosition(blueprint, raycastHit);
             return;
         }
@@ -80,24 +47,34 @@ public class BuildableWithSnapping : Buildable
         // Vector3 startPos = new Vector3(Mathf.Round(raycastHit.point.x / gridSize) * gridSize, raycastHit.point.y, Mathf.Round(raycastHit.point.z / gridSize) * gridSize);
         // return FindLowestSafePosition(startPos, rotationOffset, translatedSize, 200f);
     }
+
+
+    public bool isOccupied()
+    {
+        foreach (BuildableWithSnapping buildableWithSnapping in FindObjectsOfType<BuildableWithSnapping>())
+        {
+            // Debug.Log(Vector3.Distance(transform.position, buildableWithSnapping.transform.position);
+            if (buildableWithSnapping.type == type && Vector3.Distance(transform.position, buildableWithSnapping.transform.position) < 0.1 && !buildableWithSnapping.isBlueprint)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     //OnBuild
     public override void RemoveItems(Inventory inventory)
     {
-        if (foreignSnappingPosition != null)
-        {
-            foreignSnappingPosition.isOccupied[foreignSnappingPosition.currentRotationIndex] = true;
-            dependandSnappingPositions.Add(new DependantSnappingPosition(foreignSnappingPosition, foreignSnappingPosition.currentRotationIndex));
-            localSnappingPosition.isOccupied[0] = true;
-            foreignSnappingPosition.GetComponentInParent<BuildableWithSnapping>().dependandSnappingPositions.Add(new DependantSnappingPosition(localSnappingPosition, 0));
-        }
         base.RemoveItems(inventory);
     }
 
-    void OnDestroy()
+    public override CanBeBuilt CheckCanBuild(Inventory inventory)
     {
-        foreach (DependantSnappingPosition dependantSnappingPosition in dependandSnappingPositions)
+        if (transform.position != Vector3.zero && isOccupied())
         {
-            dependantSnappingPosition.snappingPosition.isOccupied[dependantSnappingPosition.rotationIndex] = false;
+            Debug.Log("Occupied");
+            return CanBeBuilt.OCCUPIED;
         }
+        return base.CheckCanBuild(inventory);
     }
 }

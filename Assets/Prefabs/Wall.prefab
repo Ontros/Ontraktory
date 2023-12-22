@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d64e9c5f90b4e324da38bb5ca744cf85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildableType: 0
+  buildableType: 1
   xOffset: 0
   yOffset: 1.375
   zOffset: 0
@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d64e9c5f90b4e324da38bb5ca744cf85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildableType: 0
+  buildableType: 1
   xOffset: 2.25
   yOffset: 0
   zOffset: 0
@@ -204,7 +204,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d64e9c5f90b4e324da38bb5ca744cf85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildableType: 0
+  buildableType: 1
   xOffset: 0
   yOffset: -1.375
   zOffset: 0
@@ -295,6 +295,7 @@ MonoBehaviour:
   boxCollider: {fileID: 4984791036307293884}
   gridSize: 0.5
   type: 1
+  dependandSnappingPositions: []
 --- !u!1 &5565289324779915909
 GameObject:
   m_ObjectHideFlags: 0
@@ -339,7 +340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d64e9c5f90b4e324da38bb5ca744cf85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildableType: 0
+  buildableType: 1
   xOffset: 2.25
   yOffset: 0
   zOffset: 0

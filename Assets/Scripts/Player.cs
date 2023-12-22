@@ -288,7 +288,8 @@ public class Player : MonoBehaviour
     {
         blueprint = Instantiate(buildables[objectIndex]);
         Buildable buildable = blueprint.GetComponent<Buildable>();
-        if (buildable.CheckCanBuild(inventory))
+        buildable.transform.position = Vector3.zero;
+        if (buildable.CheckCanBuild(inventory) == CanBeBuilt.YES)
         {
             isBuilding = true;
             hand.SetActive(false);
@@ -317,18 +318,25 @@ public class Player : MonoBehaviour
 
                 yield return new WaitForEndOfFrame();
             }
-            if (buildable.CheckCanBuild(inventory))
+            CanBeBuilt canBeBuilt = buildable.CheckCanBuild(inventory);
+            switch (canBeBuilt)
             {
-                buildable.RemoveItems(inventory);
-                isBuilding = false;
-                hand.SetActive(true);
-                boxCollider.enabled = true;
-                blueprint = null;
-            }
-            else
-            {
-                Destroy(blueprint);
-                blueprint = null;
+                case CanBeBuilt.YES:
+                    buildable.RemoveItems(inventory);
+                    isBuilding = false;
+                    hand.SetActive(true);
+                    boxCollider.enabled = true;
+                    blueprint = null;
+                    break;
+                case CanBeBuilt.NOT_ENOUGH_ITEMS:
+                    Destroy(blueprint);
+                    blueprint = null;
+                    break;
+                case CanBeBuilt.OCCUPIED:
+                    StartCoroutine(mainMenu.showNotification("There is already the same buildable there", 3));
+                    Destroy(blueprint);
+                    blueprint = null;
+                    break;
             }
         }
         else
