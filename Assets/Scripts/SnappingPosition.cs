@@ -17,7 +17,6 @@ public class SnappingPosition : MonoBehaviour
     public bool[] isOccupied;
     public int currentRotationIndex = 0;
 
-    public List<DependantSnappingPosition> dependandSnappingPositions = new List<DependantSnappingPosition>();
     public bool buildableHasOpposite = true;
 
     public void Start()

@@ -6,6 +6,7 @@ public class BuildableWithSnapping : Buildable
 {
     SnappingPosition foreignSnappingPosition;
     SnappingPosition localSnappingPosition;
+    public List<DependantSnappingPosition> dependandSnappingPositions = new List<DependantSnappingPosition>();
     public override void setBuildingPosition(GameObject blueprint, RaycastHit raycastHit)
     {
         Buildable colliderBuildale = raycastHit.collider.GetComponent<Buildable>();
@@ -85,21 +86,18 @@ public class BuildableWithSnapping : Buildable
         if (foreignSnappingPosition != null)
         {
             foreignSnappingPosition.isOccupied[foreignSnappingPosition.currentRotationIndex] = true;
-            localSnappingPosition.dependandSnappingPositions.Add(new DependantSnappingPosition(foreignSnappingPosition, foreignSnappingPosition.currentRotationIndex));
+            dependandSnappingPositions.Add(new DependantSnappingPosition(foreignSnappingPosition, foreignSnappingPosition.currentRotationIndex));
             localSnappingPosition.isOccupied[0] = true;
-            foreignSnappingPosition.dependandSnappingPositions.Add(new DependantSnappingPosition(localSnappingPosition, 0));
+            foreignSnappingPosition.GetComponentInParent<BuildableWithSnapping>().dependandSnappingPositions.Add(new DependantSnappingPosition(localSnappingPosition, 0));
         }
         base.RemoveItems(inventory);
     }
 
     void OnDestroy()
     {
-        if (foreignSnappingPosition != null)
+        foreach (DependantSnappingPosition dependantSnappingPosition in dependandSnappingPositions)
         {
-            foreach (DependantSnappingPosition dependantSnappingPosition in foreignSnappingPosition.dependandSnappingPositions)
-            {
-                dependantSnappingPosition.snappingPosition.isOccupied[dependantSnappingPosition.rotationIndex] = false;
-            }
+            dependantSnappingPosition.snappingPosition.isOccupied[dependantSnappingPosition.rotationIndex] = false;
         }
     }
 }
