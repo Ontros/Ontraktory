@@ -42,6 +42,7 @@ public class Buildable : Destroyable
     public virtual void setBuildingPosition(GameObject blueprint, RaycastHit raycastHit)
     {
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+        Debug.Log(blueprint.transform.rotation.eulerAngles);
         if (scrollInput != 0)
         {
             blueprint.transform.rotation *= Quaternion.Euler(0, 90 * Mathf.Sign(scrollInput), 0);
@@ -79,6 +80,7 @@ public enum BuildableType
     Foundation,
     Wall,
     Crafting_Table,
+    Ramp
 }
 
 public enum CanBeBuilt

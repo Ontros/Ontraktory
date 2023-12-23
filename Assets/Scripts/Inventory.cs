@@ -9,13 +9,12 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     [System.NonSerialized]
-    public ItemSlot[] items = getEmpty();
+    public ItemSlot[] items = getEmpty(0);
     public ItemSlot getItemStack(ItemType itemType)
     {
         return items[(int)itemType];
     }
     public MainMenu canvas;
-    public const int startingItems = 1000;
 
     // Start is called before the first frame update
     public void ChangeItem(int itemIndex, int itemDeltaAmount)
@@ -78,12 +77,12 @@ public class Inventory : MonoBehaviour
         return valid;
     }
 
-    public static ItemSlot[] getEmpty()
+    public static ItemSlot[] getEmpty(int amount)
     {
         ItemSlot[] local = new ItemSlot[(int)ItemType.Lenght];
         for (int i = 0; i < (int)ItemType.Lenght; i++)
         {
-            local[i] = new ItemSlot((ItemType)i, startingItems);
+            local[i] = new ItemSlot((ItemType)i, amount);
         }
         return local;
     }

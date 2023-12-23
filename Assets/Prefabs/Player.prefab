@@ -228,7 +228,7 @@ MonoBehaviour:
   buildables:
   - {fileID: 4074901497867827949, guid: 1fc257a1f2eb0734297362421637326c, type: 3}
   - {fileID: 4172563146604948365, guid: 188852cc1c9e1324d8e0a12d30bc4607, type: 3}
-  - {fileID: 746514146442314587, guid: 15e7f802ccf84164cab04a52ee3f9afc, type: 3}
+  - {fileID: 4074901497867827949, guid: 1fc257a1f2eb0734297362421637326c, type: 3}
   - {fileID: 448699988075769680, guid: ecbb4ff7538113246af8a851d9dbdb68, type: 3}
   - {fileID: 746514146442314587, guid: 15e7f802ccf84164cab04a52ee3f9afc, type: 3}
   isBuilding: 0

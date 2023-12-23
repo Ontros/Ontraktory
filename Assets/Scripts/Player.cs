@@ -82,8 +82,18 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (mainMenu.currentScreen != 0)
+        if (mainMenu.currentScreen == 1)
         {
+            //Escape
+            if (Input.GetKeyDown(KeyCode.F7))
+            {
+                inventory.items = Inventory.getEmpty(1000);
+            }
+            return;
+        }
+        else if (mainMenu.currentScreen == 2)
+        {
+            //Inventory
             return;
         }
         //TODO: check proper velocity/accel time.deltaTime usecase
@@ -153,18 +163,15 @@ public class Player : MonoBehaviour
 
         characterController.Move((velocity + verticalVelocity * transform.up) * Time.deltaTime);
 
-        if (Cursor.lockState == CursorLockMode.Locked)
-        {
-            float mouseX = Input.GetAxis("Mouse X") * Time.deltaTime * sensitivity * 50;
-            float mouseY = Input.GetAxis("Mouse Y") * Time.deltaTime * sensitivity * 75;
+        float mouseX = Input.GetAxis("Mouse X") * Time.deltaTime * sensitivity * 50;
+        float mouseY = Input.GetAxis("Mouse Y") * Time.deltaTime * sensitivity * 75;
 
-            xRotation -= mouseY;
-            xRotation = Mathf.Clamp(xRotation, -90, 90);
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90, 90);
 
-            transform.Rotate(Vector3.up * mouseX);
-            cameraLocation.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
-            transform.rotation *= Quaternion.Euler(0, mouseX, 0);
-        }
+        transform.Rotate(Vector3.up * mouseX);
+        cameraLocation.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        transform.rotation *= Quaternion.Euler(0, mouseX, 0);
 
         //Sprinting
         if (wasSprinting != isSprinting)
@@ -204,84 +211,109 @@ public class Player : MonoBehaviour
             cameraLocation.transform.position = transform.position + new Vector3(0, Mathf.Lerp(cameraHeightCrouch, cameraHeight, timeSinceCrouchChange * crouchSpeed), 0);
         }
 
-        //Hand
-        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        if (scrollInput != 0)
+        if (mainMenu.currentScreen == 0)
         {
-            handGameObjects[itemSelected].SetActive(false);
-            if (scrollInput > 0)
+            //Hand
+            float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+            if (scrollInput != 0)
             {
-                itemSelected = (itemSelected + 1) % handGameObjects.Length;
+                SetNewHandItem((itemSelected + handGameObjects.Length + (int)Mathf.Sign(scrollInput)) % handGameObjects.Length);
             }
-            else
+            else if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                itemSelected = (itemSelected - 1) % handGameObjects.Length;
+                SetNewHandItem(0);
             }
-            if (itemSelected < 0)
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
             {
-                itemSelected = handGameObjects.Length - 1;
+                SetNewHandItem(1);
             }
-            handGameObjects[itemSelected].SetActive(true);
-            // hand.GetComponent<MeshFilter>().mesh = handGameObjects[itemSelected];
-        }
-
-        //Atacking
-        if (Input.GetMouseButtonDown(0) && !isBuilding)
-        {
-            StartCoroutine(attack());
-            Ray ray = new Ray(cameraLocation.transform.position, cameraLocation.transform.forward);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 5f, 1 << 6))
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
             {
-                hit.collider.GetComponent<Destroyable>().Damage(10, (Tool)itemSelected, inventory);
+                SetNewHandItem(2);
+            }
+
+            //Atacking
+            if (Input.GetMouseButtonDown(0) && !isBuilding)
+            {
+                StartCoroutine(attack());
+                Ray ray = new Ray(cameraLocation.transform.position, cameraLocation.transform.forward);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, 5f, 1 << 6))
+                {
+                    hit.collider.GetComponent<Destroyable>().Damage(10, (Tool)itemSelected, inventory);
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                EnterBuildMode();
             }
         }
-
-
-
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        else
         {
-            StopBuilding();
-            blueprintCoroutine = StartCoroutine(createBlueprint(0));
-            // createBlueprintHelper(0, 1,0);
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                StopBuildingCoroutene();
+                blueprintCoroutine = StartCoroutine(createBlueprint(0));
+                // createBlueprintHelper(0, 1,0);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                StopBuildingCoroutene();
+                blueprintCoroutine = StartCoroutine(createBlueprint(1));
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                StopBuildingCoroutene();
+                blueprintCoroutine = StartCoroutine(createBlueprint(2));
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                StopBuildingCoroutene();
+                blueprintCoroutine = StartCoroutine(createBlueprint(3));
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                StopBuildingCoroutene();
+                blueprintCoroutine = StartCoroutine(createBlueprint(4));
+            }
+            else if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Q))
+            {
+                StopBuildingCoroutene();
+                ExitBuildMode();
+            }
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            StopBuilding();
-            blueprintCoroutine = StartCoroutine(createBlueprint(1));
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            StopBuilding();
-            blueprintCoroutine = StartCoroutine(createBlueprint(2));
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            StopBuilding();
-            blueprintCoroutine = StartCoroutine(createBlueprint(3));
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            StopBuilding();
-            blueprintCoroutine = StartCoroutine(createBlueprint(4));
-        }
-        else if (isBuilding && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Q)))
-        {
-            StopBuilding();
-        }
-
     }
 
-    public void StopBuilding()
+    public void StopBuildingCoroutene()
     {
         try
         {
             isBuilding = false;
-            hand.SetActive(true);
             StopCoroutine(blueprintCoroutine);
             Destroy(blueprint);
         }
         catch { }
+    }
+
+
+    public void EnterBuildMode()
+    {
+        mainMenu.setScreen(3);
+        hand.SetActive(false);
+    }
+
+    public void ExitBuildMode()
+    {
+        mainMenu.setScreen(0);
+        hand.SetActive(true);
+    }
+
+    public void SetNewHandItem(int newIndex)
+    {
+        handGameObjects[itemSelected].SetActive(false);
+        itemSelected = newIndex;
+        handGameObjects[itemSelected].SetActive(true);
     }
 
     IEnumerator createBlueprint(int objectIndex)
@@ -324,7 +356,6 @@ public class Player : MonoBehaviour
                 case CanBeBuilt.YES:
                     buildable.RemoveItems(inventory);
                     isBuilding = false;
-                    hand.SetActive(true);
                     boxCollider.enabled = true;
                     blueprint = null;
                     break;
